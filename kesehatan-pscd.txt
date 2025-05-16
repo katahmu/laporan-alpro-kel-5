@@ -1,0 +1,182 @@
+program SistemManajemenKesehatan
+kamus
+    type Pasien : <
+        id : string,
+        nama : string,
+        umur : integer,
+        gender : string,
+        alamat : string
+    >
+    
+    type Dokter : <
+        id : string,
+        nama : string,
+        spesialisasi : string
+    >
+    
+    type Riwayat : <
+        idPasien : string,
+        idDokter : string,
+        tanggal : string,
+        diagnosa : string,
+        obat : string
+    >
+    
+    pasien : array [1..100] of Pasien
+    dokter : array [1..50] of Dokter
+    riwayat : array [1..200] of Riwayat
+    nPasien, nDokter, nRiwayat : integer
+    pilihan : integer
+    idCari, namaCari : string
+algoritma
+    // Inisialisasi data
+    nPasien ← 0
+    nDokter ← 0
+    nRiwayat ← 0
+    
+    // Menu utama
+    repeat
+        output("1. Tambah Pasien")
+        output("2. Tambah Dokter")
+        output("3. Tambah Riwayat")
+        output("4. Tampilkan Pasien (urut nama)")
+        output("5. Tampilkan Pasien (urut umur)")
+        output("6. Cari Pasien (ID)")
+        output("7. Cari Pasien (Nama)")
+        output("0. Keluar")
+        input(pilihan)
+        
+        case pilihan of
+            1 : pasien[nPasien+1] ← inputPasien()
+                nPasien ← nPasien + 1
+            2 : dokter[nDokter+1] ← inputDokter()
+                nDokter ← nDokter + 1
+            3 : riwayat[nRiwayat+1] ← inputRiwayat()
+                nRiwayat ← nRiwayat + 1
+            4 : tampilkanPasien(sortByNama(pasien, nPasien), nPasien)
+            5 : tampilkanPasien(sortByUmur(pasien, nPasien), nPasien)
+            6 : input(idCari)
+                tampilkanPasien(cariByID(pasien, nPasien, idCari), 1)
+            7 : input(namaCari)
+                tampilkanPasien(cariByNama(pasien, nPasien, namaCari), 1)
+            0 : output("Program selesai")
+            else : output("Pilihan tidak valid")
+        endcase
+    until pilihan = 0
+endprogram
+
+function inputPasien() → Pasien
+kamus
+    p : Pasien
+algoritma
+    input(p.id, p.nama, p.umur, p.gender, p.alamat)
+    return p
+endfunction
+
+function inputDokter() → Dokter
+kamus
+    d : Dokter
+algoritma
+    input(d.id, d.nama, d.spesialisasi)
+    return d
+endfunction
+
+function inputRiwayat() → Riwayat
+kamus
+    r : Riwayat
+algoritma
+    input(r.idPasien, r.idDokter, r.tanggal, r.diagnosa, r.obat)
+    return r
+endfunction
+
+function sortByNama(pasien : array [1..100] of Pasien, n : integer) → array [1..100] of Pasien
+kamus
+    i, j : integer
+    temp : Pasien
+    hasil : array [1..100] of Pasien
+algoritma
+    hasil ← pasien
+    
+    for i ← 1 to n-1 do
+        for j ← i+1 to n do
+            if hasil[i].nama > hasil[j].nama then
+                temp ← hasil[i]
+                hasil[i] ← hasil[j]
+                hasil[j] ← temp
+            endif
+        endfor
+    endfor
+    
+    return hasil
+endfunction
+
+function sortByUmur(pasien : array [1..100] of Pasien, n : integer) → array [1..100] of Pasien
+kamus
+    i, j : integer
+    temp : Pasien
+    hasil : array [1..100] of Pasien
+algoritma
+    hasil ← pasien
+    
+    for i ← 1 to n-1 do
+        for j ← i+1 to n do
+            if hasil[i].umur > hasil[j].umur then
+                temp ← hasil[i]
+                hasil[i] ← hasil[j]
+                hasil[j] ← temp
+            endif
+        endfor
+    endfor
+    
+    return hasil
+endfunction
+
+function cariByID(pasien : array [1..100] of Pasien, n : integer, id : string) → array [1..100] of Pasien
+kamus
+    i : integer
+    hasil : array [1..100] of Pasien
+algoritma
+    hasil[1] ← <"", "", 0, "", "">  // Inisialisasi
+    
+    for i ← 1 to n do
+        if pasien[i].id = id then
+            hasil[1] ← pasien[i]
+        endif
+    endfor
+    
+    return hasil
+endfunction
+
+function cariByNama(pasien : array [1..100] of Pasien, n : integer, nama : string) → array [1..100] of Pasien
+kamus
+    i, count : integer
+    hasil : array [1..100] of Pasien
+algoritma
+    count ← 0
+    
+    for i ← 1 to n do
+        if pasien[i].nama = nama then
+            count ← count + 1
+            hasil[count] ← pasien[i]
+        endif
+    endfor
+    
+    return hasil
+endfunction
+
+function tampilkanPasien(pasien : array [1..100] of Pasien, n : integer)
+kamus
+    i : integer
+algoritma
+    if n = 0 then
+        output("Tidak ada data pasien")
+    else
+        for i ← 1 to n do
+            if pasien[i].id ≠ "" then
+                output("ID:", pasien[i].id, " Nama:", pasien[i].nama, 
+                      " Umur:", pasien[i].umur, " Gender:", pasien[i].gender, 
+                      " Alamat:", pasien[i].alamat)
+            endif
+        endfor
+    endif
+endfunction
