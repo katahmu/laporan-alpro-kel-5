@@ -27,36 +27,20 @@ type Riwayat struct {
 	diagnosa string
 }
 
+const maxData = 100
+
 var (
-	daftarPasien  []Pasien
-	daftarDokter  []Dokter
-	daftarRiwayat []Riwayat
+	daftarPasien  [maxData]Pasien
+	daftarDokter  [maxData]Dokter
+	daftarRiwayat [maxData]Riwayat
+	jumlahPasien  int
+	jumlahDokter  int
+	jumlahRiwayat int
 )
 
 func main() {
-	// Inisialisasi beberapa data contoh
-	daftarPasien = []Pasien{
-		{"P001", "Assyifa Dwi Safitri", 35, "P"},
-		{"P002", "Amirah Essary Yunsarah Sujuthi", 28, "P"},
-		{"P003", "Keisha Hananta", 45, "P"},
-		{"P004", "Dit Adit", 20, "L"},
-	}
-
-	daftarDokter = []Dokter{
-		{"D001", "Dr. Ahmad", "Kardiologi", "L", "Senin-Jumat, 08.00-12.00"},
-		{"D002", "Dr. Budi", "Kedokteran Umum", "L", "Senin-Jumat, 13.00-17.00"},
-		{"D003", "Dr. Candra", "Kedokteran Gigi", "L", "Senin-Jumat, 08.00-12.00"},
-		{"D004", "Dr. Dwi", "Kedokteran Gigi", "P", "Senin-Jumat, 13.00-17.00"},
-		{"D005", "Dr. Eka", "Kedokteran Mata", "P", "Senin-Jumat, 08.00-12.00"},
-	}
-
-	daftarRiwayat = []Riwayat{
-		{"R001", "P001", "D001", "2023-07-01", "Cephalgia"},
-		{"R002", "P002", "D002", "2023-07-02", "Nausea"},
-		{"R003", "P003", "D003", "2023-07-03", "Odontalgia"},
-		{"R004", "P004", "D004", "2023-07-04", "Karies Gigi"},
-		{"R005", "P005", "D005", "2023-07-05", "Miopia"},
-	}
+	// Inisialisasi data contoh
+	initData()
 
 	for {
 		fmt.Println("\n=== SISTEM INFORMASI RUMAH SAKIT ===")
@@ -85,7 +69,32 @@ func main() {
 	}
 }
 
-// Manajemen Pasien
+func initData() {
+	// Inisialisasi pasien
+	daftarPasien[0] = Pasien{"P001", "Assyifa Dwi Safitri", 35, "P"}
+	daftarPasien[1] = Pasien{"P002", "Amirah Essary Yunsarah Sujuthi", 28, "P"}
+	daftarPasien[2] = Pasien{"P003", "Keisha Hananta", 45, "P"}
+	daftarPasien[3] = Pasien{"P004", "Dit Adit", 20, "L"}
+	jumlahPasien = 4
+
+	// Inisialisasi dokter
+	daftarDokter[0] = Dokter{"D001", "Dr. Ahmad", "Kardiologi", "L", "Senin-Jumat, 08.00-12.00"}
+	daftarDokter[1] = Dokter{"D002", "Dr. Budi", "Kedokteran Umum", "L", "Senin-Jumat, 13.00-17.00"}
+	daftarDokter[2] = Dokter{"D003", "Dr. Candra", "Kedokteran Gigi", "L", "Senin-Jumat, 08.00-12.00"}
+	daftarDokter[3] = Dokter{"D004", "Dr. Dwi", "Kedokteran Gigi", "P", "Senin-Jumat, 13.00-17.00"}
+	daftarDokter[4] = Dokter{"D005", "Dr. Eka", "Kedokteran Mata", "P", "Senin-Jumat, 08.00-12.00"}
+	jumlahDokter = 5
+
+	// Inisialisasi riwayat
+	daftarRiwayat[0] = Riwayat{"R001", "P001", "D001", "2023-07-01", "Cephalgia"}
+	daftarRiwayat[1] = Riwayat{"R002", "P002", "D002", "2023-07-02", "Nausea"}
+	daftarRiwayat[2] = Riwayat{"R003", "P003", "D003", "2023-07-03", "Odontalgia"}
+	daftarRiwayat[3] = Riwayat{"R004", "P004", "D004", "2023-07-04", "Karies Gigi"}
+	daftarRiwayat[4] = Riwayat{"R005", "P001", "D005", "2023-07-05", "Miopia"}
+	jumlahRiwayat = 5
+}
+
+// MANAJEMEN PASIEN
 func menuPasien() {
 	for {
 		fmt.Println("\n=== MENU PASIEN ===")
@@ -93,9 +102,9 @@ func menuPasien() {
 		fmt.Println("2. Tambah Pasien Baru")
 		fmt.Println("3. Edit Data Pasien")
 		fmt.Println("4. Hapus Data Pasien")
-		fmt.Println("5. Urutkan Pasien Berdasarkan Umur")
-		fmt.Println("6. Urutkan Pasien Berdasarkan Nama")
-		fmt.Println("7. Cari Pasien Berdasarkan ID")
+		fmt.Println("5. Urutkan Pasien Berdasarkan Umur (Selection Sort)")
+		fmt.Println("6. Urutkan Pasien Berdasarkan Nama (Insertion Sort)")
+		fmt.Println("7. Cari Pasien Berdasarkan ID (Sequential Search)")
 		fmt.Println("8. Kembali ke Menu Utama")
 		fmt.Print("Pilih menu (1-8): ")
 
@@ -135,13 +144,18 @@ func tampilkanPasien() {
 	fmt.Println("==========================================")
 	fmt.Printf("%-6s %-25s %-5s %-10s\n", "ID", "Nama", "Umur", "Gender")
 	fmt.Println("==========================================")
-	for i := 0; i < len(daftarPasien); i++ {
+	for i := 0; i < jumlahPasien; i++ {
 		p := daftarPasien[i]
 		fmt.Printf("%-6s %-25s %-5d %-10s\n", p.id, p.nama, p.umur, p.gender)
 	}
 }
 
 func tambahPasien() {
+	if jumlahPasien >= maxData {
+		fmt.Println("Kapasitas pasien penuh!")
+		return
+	}
+
 	var pasien Pasien
 	fmt.Println("\nTambah Pasien Baru")
 	fmt.Print("ID Pasien: ")
@@ -153,7 +167,8 @@ func tambahPasien() {
 	fmt.Print("Gender (L/P): ")
 	fmt.Scanln(&pasien.gender)
 
-	daftarPasien = append(daftarPasien, pasien)
+	daftarPasien[jumlahPasien] = pasien
+	jumlahPasien++
 	fmt.Println("Pasien berhasil ditambahkan!")
 }
 
@@ -162,7 +177,8 @@ func editPasien() {
 	var id string
 	fmt.Scanln(&id)
 
-	for i := 0; i < len(daftarPasien); i++ {
+	found := false
+	for i := 0; i < jumlahPasien && !found; i++ {
 		if daftarPasien[i].id == id {
 			fmt.Println("\nData Pasien Ditemukan:")
 			fmt.Printf("%-6s %-25s %-5s %-10s\n", "ID", "Nama", "Umur", "Gender")
@@ -177,10 +193,13 @@ func editPasien() {
 			fmt.Scanln(&daftarPasien[i].gender)
 
 			fmt.Println("Data pasien berhasil diperbarui!")
-			return
+			found = true
 		}
 	}
-	fmt.Println("Pasien dengan ID", id, "tidak ditemukan.")
+
+	if !found {
+		fmt.Println("Pasien dengan ID", id, "tidak ditemukan.")
+	}
 }
 
 func hapusPasien() {
@@ -188,29 +207,40 @@ func hapusPasien() {
 	var id string
 	fmt.Scanln(&id)
 
-	for i := 0; i < len(daftarPasien); i++ {
+	found := false
+	for i := 0; i < jumlahPasien && !found; i++ {
 		if daftarPasien[i].id == id {
-			// Hapus riwayat yang terkait dengan pasien ini
-			for j := 0; j < len(daftarRiwayat); j++ {
+			for j := 0; j < jumlahRiwayat; {
 				if daftarRiwayat[j].pasienID == id {
-					daftarRiwayat = append(daftarRiwayat[:j], daftarRiwayat[j+1:]...)
-					j-- 
+					for k := j; k < jumlahRiwayat-1; k++ {
+						daftarRiwayat[k] = daftarRiwayat[k+1]
+					}
+					jumlahRiwayat--
+				} else {
+					j++
 				}
 			}
 
-			// Hapus pasien
-			daftarPasien = append(daftarPasien[:i], daftarPasien[i+1:]...)
+			for j := i; j < jumlahPasien-1; j++ {
+				daftarPasien[j] = daftarPasien[j+1]
+			}
+			jumlahPasien--
+
 			fmt.Println("Pasien dan riwayat terkait berhasil dihapus!")
-			return
+			found = true
 		}
 	}
-	fmt.Println("Pasien dengan ID", id, "tidak ditemukan.")
+
+	if !found {
+		fmt.Println("Pasien dengan ID", id, "tidak ditemukan.")
+	}
 }
 
 func urutkanPasienByUmur() {
-	for i := 0; i < len(daftarPasien); i++ {
+	// Selection Sort Ascending
+	for i := 0; i < jumlahPasien-1; i++ {
 		minIndex := i
-		for j := i + 1; j < len(daftarPasien); j++ {
+		for j := i + 1; j < jumlahPasien; j++ {
 			if daftarPasien[j].umur < daftarPasien[minIndex].umur {
 				minIndex = j
 			}
@@ -222,7 +252,8 @@ func urutkanPasienByUmur() {
 }
 
 func urutkanPasienByNama() {
-	for i := 1; i < len(daftarPasien); i++ {
+	// Insertion Sort Ascending
+	for i := 1; i < jumlahPasien; i++ {
 		key := daftarPasien[i]
 		j := i - 1
 		for j >= 0 && daftarPasien[j].nama > key.nama {
@@ -235,7 +266,7 @@ func urutkanPasienByNama() {
 
 func cariPasienById(id string) {
 	found := false
-	for i := 0; i < len(daftarPasien); i++ {
+	for i := 0; i < jumlahPasien && !found; i++ {
 		if daftarPasien[i].id == id {
 			fmt.Println("\nData Pasien Ditemukan:")
 			fmt.Println("==========================================")
@@ -243,13 +274,14 @@ func cariPasienById(id string) {
 			fmt.Println("==========================================")
 			fmt.Printf("%-6s %-25s %-5d %-10s\n", daftarPasien[i].id, daftarPasien[i].nama, daftarPasien[i].umur, daftarPasien[i].gender)
 			found = true
-			break
 		}
 	}
 	if !found {
 		fmt.Println("Pasien dengan ID", id, "tidak ditemukan.")
 	}
 }
+
+// MANAJEMEN DOKTER
 func menuDokter() {
 	for {
 		fmt.Println("\n=== MENU DOKTER ===")
@@ -257,7 +289,7 @@ func menuDokter() {
 		fmt.Println("2. Tambah Dokter Baru")
 		fmt.Println("3. Edit Data Dokter")
 		fmt.Println("4. Hapus Data Dokter")
-		fmt.Println("5. Urutkan Dokter Berdasarkan Nama")
+		fmt.Println("5. Urutkan Dokter Berdasarkan Nama (Selection Sort)")
 		fmt.Println("6. Cari Dokter Berdasarkan ID (Binary Search)")
 		fmt.Println("7. Kembali ke Menu Utama")
 		fmt.Print("Pilih menu (1-7): ")
@@ -295,13 +327,18 @@ func tampilkanDokter() {
 	fmt.Println("=============================================================")
 	fmt.Printf("%-6s %-20s %-15s %-10s %-20s\n", "ID", "Nama", "Spesialisasi", "Gender", "Jadwal")
 	fmt.Println("=============================================================")
-	for i := 0; i < len(daftarDokter); i++ {
+	for i := 0; i < jumlahDokter; i++ {
 		d := daftarDokter[i]
 		fmt.Printf("%-6s %-20s %-15s %-10s %-20s\n", d.id, d.nama, d.spesialisasi, d.gender, d.jadwal)
 	}
 }
 
 func tambahDokter() {
+	if jumlahDokter >= maxData {
+		fmt.Println("Kapasitas dokter penuh!")
+		return
+	}
+
 	var dokter Dokter
 	fmt.Println("\nTambah Dokter Baru")
 	fmt.Print("ID Dokter: ")
@@ -315,7 +352,8 @@ func tambahDokter() {
 	fmt.Print("Jadwal Praktek: ")
 	fmt.Scanln(&dokter.jadwal)
 
-	daftarDokter = append(daftarDokter, dokter)
+	daftarDokter[jumlahDokter] = dokter
+	jumlahDokter++
 	fmt.Println("Dokter berhasil ditambahkan!")
 }
 
@@ -324,7 +362,8 @@ func editDokter() {
 	var id string
 	fmt.Scanln(&id)
 
-	for i := 0; i < len(daftarDokter); i++ {
+	found := false
+	for i := 0; i < jumlahDokter && !found; i++ {
 		if daftarDokter[i].id == id {
 			fmt.Println("\nData Dokter Ditemukan:")
 			fmt.Printf("%-6s %-20s %-15s %-10s %-20s\n", "ID", "Nama", "Spesialisasi", "Gender", "Jadwal")
@@ -341,10 +380,13 @@ func editDokter() {
 			fmt.Scanln(&daftarDokter[i].jadwal)
 
 			fmt.Println("Data dokter berhasil diperbarui!")
-			return
+			found = true
 		}
 	}
-	fmt.Println("Dokter dengan ID", id, "tidak ditemukan.")
+
+	if !found {
+		fmt.Println("Dokter dengan ID", id, "tidak ditemukan.")
+	}
 }
 
 func hapusDokter() {
@@ -352,29 +394,40 @@ func hapusDokter() {
 	var id string
 	fmt.Scanln(&id)
 
-	for i := 0; i < len(daftarDokter); i++ {
+	found := false
+	for i := 0; i < jumlahDokter && !found; i++ {
 		if daftarDokter[i].id == id {
-			// Hapus riwayat yang terkait dengan dokter ini
-			for j := 0; j < len(daftarRiwayat); j++ {
+			for j := 0; j < jumlahRiwayat; {
 				if daftarRiwayat[j].dokterID == id {
-					daftarRiwayat = append(daftarRiwayat[:j], daftarRiwayat[j+1:]...)
-					j-- 
+					for k := j; k < jumlahRiwayat-1; k++ {
+						daftarRiwayat[k] = daftarRiwayat[k+1]
+					}
+					jumlahRiwayat--
+				} else {
+					j++
 				}
 			}
 
-			// Hapus dokter
-			daftarDokter = append(daftarDokter[:i], daftarDokter[i+1:]...)
+			for j := i; j < jumlahDokter-1; j++ {
+				daftarDokter[j] = daftarDokter[j+1]
+			}
+			jumlahDokter--
+
 			fmt.Println("Dokter dan riwayat terkait berhasil dihapus!")
-			return
+			found = true
 		}
 	}
-	fmt.Println("Dokter dengan ID", id, "tidak ditemukan.")
+
+	if !found {
+		fmt.Println("Dokter dengan ID", id, "tidak ditemukan.")
+	}
 }
 
 func urutkanDokterByNama() {
-	for i := 0; i < len(daftarDokter); i++ {
+	// Selection Sort Ascending
+	for i := 0; i < jumlahDokter-1; i++ {
 		minIndex := i
-		for j := i + 1; j < len(daftarDokter); j++ {
+		for j := i + 1; j < jumlahDokter; j++ {
 			if daftarDokter[j].nama < daftarDokter[minIndex].nama {
 				minIndex = j
 			}
@@ -386,19 +439,18 @@ func urutkanDokterByNama() {
 }
 
 func cariDokterByIdBinary(id string) {
-	// First sort the doctors by ID using bubble sort
-	n := len(daftarDokter)
-	for i := 0; i < n-1; i++ {
-		for j := 0; j < n-i-1; j++ {
+	// Bubble Sort
+	for i := 0; i < jumlahDokter-1; i++ {
+		for j := 0; j < jumlahDokter-i-1; j++ {
 			if daftarDokter[j].id > daftarDokter[j+1].id {
 				daftarDokter[j], daftarDokter[j+1] = daftarDokter[j+1], daftarDokter[j]
 			}
 		}
 	}
 
-	// Perform binary search
+	// Binary Search
 	low := 0
-	high := len(daftarDokter) - 1
+	high := jumlahDokter - 1
 	found := false
 	var mid int
 
@@ -427,7 +479,7 @@ func cariDokterByIdBinary(id string) {
 	}
 }
 
-// Manajemen Riwayat Medis
+// Manajemen Riwayat
 func menuRiwayat() {
 	for {
 		fmt.Println("\n=== MENU RIWAYAT ===")
@@ -463,13 +515,18 @@ func tampilkanRiwayat() {
 	fmt.Println("====================================================================")
 	fmt.Printf("%-6s %-10s %-10s %-12s %-30s\n", "ID", "Pasien ID", "Dokter ID", "Tanggal", "Diagnosa")
 	fmt.Println("====================================================================")
-	for i := 0; i < len(daftarRiwayat); i++ {
+	for i := 0; i < jumlahRiwayat; i++ {
 		r := daftarRiwayat[i]
 		fmt.Printf("%-6s %-10s %-10s %-12s %-30s\n", r.id, r.pasienID, r.dokterID, r.tanggal, r.diagnosa)
 	}
 }
 
 func tambahRiwayat() {
+	if jumlahRiwayat >= maxData {
+		fmt.Println("Kapasitas riwayat penuh!")
+		return
+	}
+
 	var riwayat Riwayat
 	fmt.Println("\nTambah Riwayat Baru")
 	fmt.Print("ID Riwayat: ")
@@ -483,7 +540,8 @@ func tambahRiwayat() {
 	fmt.Print("Diagnosa: ")
 	fmt.Scanln(&riwayat.diagnosa)
 
-	daftarRiwayat = append(daftarRiwayat, riwayat)
+	daftarRiwayat[jumlahRiwayat] = riwayat
+	jumlahRiwayat++
 	fmt.Println("Riwayat berhasil ditambahkan!")
 }
 
@@ -492,7 +550,8 @@ func editRiwayat() {
 	var id string
 	fmt.Scanln(&id)
 
-	for i := 0; i < len(daftarRiwayat); i++ {
+	found := false
+	for i := 0; i < jumlahRiwayat && !found; i++ {
 		if daftarRiwayat[i].id == id {
 			fmt.Println("\nData Riwayat Ditemukan:")
 			fmt.Printf("%-6s %-10s %-10s %-12s %-30s\n", "ID", "Pasien ID", "Dokter ID", "Tanggal", "Diagnosa")
@@ -509,10 +568,13 @@ func editRiwayat() {
 			fmt.Scanln(&daftarRiwayat[i].diagnosa)
 
 			fmt.Println("Data riwayat berhasil diperbarui!")
-			return
+			found = true
 		}
 	}
-	fmt.Println("Riwayat dengan ID", id, "tidak ditemukan.")
+
+	if !found {
+		fmt.Println("Riwayat dengan ID", id, "tidak ditemukan.")
+	}
 }
 
 func hapusRiwayat() {
@@ -520,12 +582,20 @@ func hapusRiwayat() {
 	var id string
 	fmt.Scanln(&id)
 
-	for i := 0; i < len(daftarRiwayat); i++ {
+	found := false
+	for i := 0; i < jumlahRiwayat && !found; i++ {
 		if daftarRiwayat[i].id == id {
-			daftarRiwayat = append(daftarRiwayat[:i], daftarRiwayat[i+1:]...)
+			for j := i; j < jumlahRiwayat-1; j++ {
+				daftarRiwayat[j] = daftarRiwayat[j+1]
+			}
+			jumlahRiwayat--
+
 			fmt.Println("Riwayat berhasil dihapus!")
-			return
+			found = true
 		}
 	}
-	fmt.Println("Riwayat dengan ID", id, "tidak ditemukan.")
+
+	if !found {
+		fmt.Println("Riwayat dengan ID", id, "tidak ditemukan.")
+	}
 }
