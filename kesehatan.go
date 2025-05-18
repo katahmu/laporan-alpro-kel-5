@@ -258,8 +258,9 @@ func menuDokter() {
 		fmt.Println("3. Edit Data Dokter")
 		fmt.Println("4. Hapus Data Dokter")
 		fmt.Println("5. Urutkan Dokter Berdasarkan Nama")
-		fmt.Println("6. Kembali ke Menu Utama")
-		fmt.Print("Pilih menu (1-6): ")
+		fmt.Println("6. Cari Dokter Berdasarkan ID (Binary Search)")
+		fmt.Println("7. Kembali ke Menu Utama")
+		fmt.Print("Pilih menu (1-7): ")
 
 		var pilihan int
 		fmt.Scanln(&pilihan)
@@ -277,9 +278,14 @@ func menuDokter() {
 			urutkanDokterByNama()
 			tampilkanDokter()
 		case 6:
+			fmt.Print("Masukkan ID Dokter: ")
+			var id string
+			fmt.Scanln(&id)
+			cariDokterByIdBinary(id)
+		case 7:
 			return
 		default:
-			fmt.Println("Pilihan tidak valid! Silakan pilih 1-6.")
+			fmt.Println("Pilihan tidak valid! Silakan pilih 1-7.")
 		}
 	}
 }
@@ -376,6 +382,48 @@ func urutkanDokterByNama() {
 		if minIndex != i {
 			daftarDokter[i], daftarDokter[minIndex] = daftarDokter[minIndex], daftarDokter[i]
 		}
+	}
+}
+
+func cariDokterByIdBinary(id string) {
+	// First sort the doctors by ID using bubble sort
+	n := len(daftarDokter)
+	for i := 0; i < n-1; i++ {
+		for j := 0; j < n-i-1; j++ {
+			if daftarDokter[j].id > daftarDokter[j+1].id {
+				daftarDokter[j], daftarDokter[j+1] = daftarDokter[j+1], daftarDokter[j]
+			}
+		}
+	}
+
+	// Perform binary search
+	low := 0
+	high := len(daftarDokter) - 1
+	found := false
+	var mid int
+
+	for low <= high {
+		mid = (low + high) / 2
+
+		if daftarDokter[mid].id == id {
+			found = true
+			break
+		} else if daftarDokter[mid].id < id {
+			low = mid + 1
+		} else {
+			high = mid - 1
+		}
+	}
+
+	if found {
+		d := daftarDokter[mid]
+		fmt.Println("\nData Dokter Ditemukan (Binary Search):")
+		fmt.Println("=============================================================")
+		fmt.Printf("%-6s %-20s %-15s %-10s %-20s\n", "ID", "Nama", "Spesialisasi", "Gender", "Jadwal")
+		fmt.Println("=============================================================")
+		fmt.Printf("%-6s %-20s %-15s %-10s %-20s\n", d.id, d.nama, d.spesialisasi, d.gender, d.jadwal)
+	} else {
+		fmt.Println("Dokter dengan ID", id, "tidak ditemukan.")
 	}
 }
 
