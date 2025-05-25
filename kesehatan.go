@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 )
 
+// Struktur data untuk menyimpan informasi pasien
 type Pasien struct {
 	id     string
 	nama   string
@@ -11,6 +13,7 @@ type Pasien struct {
 	gender string
 }
 
+// Struktur data untuk menyimpan informasi dokter
 type Dokter struct {
 	id           string
 	nama         string
@@ -19,6 +22,7 @@ type Dokter struct {
 	jadwal       string
 }
 
+// Struktur data untuk menyimpan informasi riwayat medis
 type Riwayat struct {
 	id       string
 	pasienID string
@@ -27,8 +31,10 @@ type Riwayat struct {
 	diagnosa string
 }
 
+// Konstanta untuk menentukan ukuran maksimum data
 const maxData = 100
 
+// Variabel global untuk menyimpan data
 var (
 	daftarPasien  [maxData]Pasien
 	daftarDokter  [maxData]Dokter
@@ -43,7 +49,7 @@ func main() {
 	initData()
 
 	for {
-		fmt.Println("\n=== SISTEM INFORMASI RUMAH SAKIT ===")
+		fmt.Println("\n=== MEDICORE - SISTEM INFORMASI RUMAH SAKIT ===")
 		fmt.Println("1. Kelola Data Pasien")
 		fmt.Println("2. Kelola Data Dokter")
 		fmt.Println("3. Kelola Data Riwayat")
@@ -69,10 +75,11 @@ func main() {
 	}
 }
 
+// Fungsi untuk menginisialisasi data awal
 func initData() {
 	// Inisialisasi pasien
 	daftarPasien[0] = Pasien{"P001", "Assyifa Dwi Safitri", 35, "P"}
-	daftarPasien[1] = Pasien{"P002", "Amirah Essary Yunsarah Sujuthi", 28, "P"}
+	daftarPasien[1] = Pasien{"P002", "Amirah Sujuthi", 28, "P"}
 	daftarPasien[2] = Pasien{"P003", "Keisha Hananta", 45, "P"}
 	daftarPasien[3] = Pasien{"P004", "Dit Adit", 20, "L"}
 	jumlahPasien = 4
@@ -93,6 +100,8 @@ func initData() {
 	daftarRiwayat[4] = Riwayat{"R005", "P001", "D005", "2023-07-05", "Miopia"}
 	jumlahRiwayat = 5
 }
+
+
 
 // MANAJEMEN PASIEN
 func menuPasien() {
@@ -139,6 +148,7 @@ func menuPasien() {
 	}
 }
 
+// Fungsi untuk menampilkan daftar pasien
 func tampilkanPasien() {
 	fmt.Println("\nDaftar Pasien:")
 	fmt.Println("==========================================")
@@ -150,6 +160,17 @@ func tampilkanPasien() {
 	}
 }
 
+// Fungsi untuk menghasilkan ID pasien baru secara otomatis
+func generatePasienID() string {
+	if jumlahPasien == 0 {
+		return "P001"
+	}
+	lastID := daftarPasien[jumlahPasien-1].id
+	num, _ := strconv.Atoi(lastID[1:])
+	return fmt.Sprintf("P%03d", num+1)
+}
+
+// Fungsi untuk menambah pasien baru
 func tambahPasien() {
 	if jumlahPasien >= maxData {
 		fmt.Println("Kapasitas pasien penuh!")
@@ -157,9 +178,12 @@ func tambahPasien() {
 	}
 
 	var pasien Pasien
+
+	pasien.id = generatePasienID() // Menghasilkan ID otomatis
+	
 	fmt.Println("\nTambah Pasien Baru")
-	fmt.Print("ID Pasien: ")
-	fmt.Scanln(&pasien.id)
+
+	fmt.Println("ID Pasien:", pasien.id) // Menampilkan ID yang dihasilkan
 	fmt.Print("Nama Pasien: ")
 	fmt.Scanln(&pasien.nama)
 	fmt.Print("Umur Pasien: ")
@@ -172,6 +196,7 @@ func tambahPasien() {
 	fmt.Println("Pasien berhasil ditambahkan!")
 }
 
+// Fungsi untuk mengedit data pasien
 func editPasien() {
 	fmt.Print("Masukkan ID Pasien yang akan diedit: ")
 	var id string
@@ -202,6 +227,7 @@ func editPasien() {
 	}
 }
 
+// Fungsi untuk menghapus data pasien
 func hapusPasien() {
 	fmt.Print("Masukkan ID Pasien yang akan dihapus: ")
 	var id string
@@ -236,8 +262,10 @@ func hapusPasien() {
 	}
 }
 
+// Fungsi untuk mengurutkan pasien berdasarkan umur menggunakan Selection Sort
 func urutkanPasienByUmur() {
-	// Selection Sort Ascending
+
+	// Selection Sort Ascending (urutan naik)
 	for i := 0; i < jumlahPasien-1; i++ {
 		minIndex := i
 		for j := i + 1; j < jumlahPasien; j++ {
@@ -251,8 +279,10 @@ func urutkanPasienByUmur() {
 	}
 }
 
+// Fungsi untuk mengurutkan pasien berdasarkan nama menggunakan Insertion Sort
 func urutkanPasienByNama() {
-	// Insertion Sort Ascending
+
+	// Insertion Sort Ascending (urutan naik)
 	for i := 1; i < jumlahPasien; i++ {
 		key := daftarPasien[i]
 		j := i - 1
@@ -264,6 +294,7 @@ func urutkanPasienByNama() {
 	}
 }
 
+// Fungsi untuk mencari pasien berdasarkan ID
 func cariPasienById(id string) {
 	found := false
 	for i := 0; i < jumlahPasien && !found; i++ {
@@ -322,6 +353,7 @@ func menuDokter() {
 	}
 }
 
+// Fungsi untuk menampilkan daftar dokter
 func tampilkanDokter() {
 	fmt.Println("\nDaftar Dokter:")
 	fmt.Println("=============================================================")
@@ -333,6 +365,17 @@ func tampilkanDokter() {
 	}
 }
 
+// Fungsi untuk menghasilkan ID dokter secara otomatis
+func generateDokterID() string {
+	if jumlahDokter == 0 {
+		return "D001"
+	}
+	lastID := daftarDokter[jumlahDokter-1].id
+	num, _ := strconv.Atoi(lastID[1:])
+	return fmt.Sprintf("D%03d", num+1)
+}
+
+// Fungsi untuk menambah data dokter baru
 func tambahDokter() {
 	if jumlahDokter >= maxData {
 		fmt.Println("Kapasitas dokter penuh!")
@@ -340,9 +383,11 @@ func tambahDokter() {
 	}
 
 	var dokter Dokter
+	// Membuat ID secara otomatis
+	dokter.id = generateDokterID()
+	
 	fmt.Println("\nTambah Dokter Baru")
-	fmt.Print("ID Dokter: ")
-	fmt.Scanln(&dokter.id)
+	fmt.Println("ID Dokter:", dokter.id) // Menampilkan ID yang dibuat
 	fmt.Print("Nama Dokter: ")
 	fmt.Scanln(&dokter.nama)
 	fmt.Print("Spesialisasi: ")
@@ -357,6 +402,7 @@ func tambahDokter() {
 	fmt.Println("Dokter berhasil ditambahkan!")
 }
 
+// Fungsi untuk mengedit data dokter
 func editDokter() {
 	fmt.Print("Masukkan ID Dokter yang akan diedit: ")
 	var id string
@@ -389,6 +435,7 @@ func editDokter() {
 	}
 }
 
+// Fungsi untuk menghapus data dokter
 func hapusDokter() {
 	fmt.Print("Masukkan ID Dokter yang akan dihapus: ")
 	var id string
@@ -397,6 +444,7 @@ func hapusDokter() {
 	found := false
 	for i := 0; i < jumlahDokter && !found; i++ {
 		if daftarDokter[i].id == id {
+			// Menghapus riwayat terkait dengan dokter
 			for j := 0; j < jumlahRiwayat; {
 				if daftarRiwayat[j].dokterID == id {
 					for k := j; k < jumlahRiwayat-1; k++ {
@@ -408,6 +456,7 @@ func hapusDokter() {
 				}
 			}
 
+			// Menghapus data dokter
 			for j := i; j < jumlahDokter-1; j++ {
 				daftarDokter[j] = daftarDokter[j+1]
 			}
@@ -423,8 +472,9 @@ func hapusDokter() {
 	}
 }
 
+// Fungsi untuk mengurutkan dokter berdasarkan nama menggunakan Selection Sort
 func urutkanDokterByNama() {
-	// Selection Sort Ascending
+	// Pengurutan naik (ascending)
 	for i := 0; i < jumlahDokter-1; i++ {
 		minIndex := i
 		for j := i + 1; j < jumlahDokter; j++ {
@@ -438,8 +488,9 @@ func urutkanDokterByNama() {
 	}
 }
 
+// Fungsi untuk mencari dokter berdasarkan ID menggunakan Binary Search
 func cariDokterByIdBinary(id string) {
-	// Bubble Sort
+	// Pengurutan menggunakan Bubble Sort
 	for i := 0; i < jumlahDokter-1; i++ {
 		for j := 0; j < jumlahDokter-i-1; j++ {
 			if daftarDokter[j].id > daftarDokter[j+1].id {
@@ -448,7 +499,7 @@ func cariDokterByIdBinary(id string) {
 		}
 	}
 
-	// Binary Search
+	// Pencarian menggunakan Binary Search
 	low := 0
 	high := jumlahDokter - 1
 	found := false
@@ -469,7 +520,7 @@ func cariDokterByIdBinary(id string) {
 
 	if found {
 		d := daftarDokter[mid]
-		fmt.Println("\nData Dokter Ditemukan (Binary Search):")
+		fmt.Println("\nData Dokter Ditemukan (Pencarian Biner):")
 		fmt.Println("=============================================================")
 		fmt.Printf("%-6s %-20s %-15s %-10s %-20s\n", "ID", "Nama", "Spesialisasi", "Gender", "Jadwal")
 		fmt.Println("=============================================================")
@@ -478,7 +529,6 @@ func cariDokterByIdBinary(id string) {
 		fmt.Println("Dokter dengan ID", id, "tidak ditemukan.")
 	}
 }
-
 // Manajemen Riwayat
 func menuRiwayat() {
 	for {
@@ -510,6 +560,7 @@ func menuRiwayat() {
 	}
 }
 
+// Fungsi untuk menampilkan semua data riwayat
 func tampilkanRiwayat() {
 	fmt.Println("\nDaftar Riwayat:")
 	fmt.Println("====================================================================")
@@ -521,6 +572,17 @@ func tampilkanRiwayat() {
 	}
 }
 
+// Fungsi untuk menghasilkan ID riwayat secara otomatis
+func generateRiwayatID() string {
+	if jumlahRiwayat == 0 {
+		return "R001"
+	}
+	lastID := daftarRiwayat[jumlahRiwayat-1].id
+	num, _ := strconv.Atoi(lastID[1:])
+	return fmt.Sprintf("R%03d", num+1)
+}
+
+// Fungsi untuk menambah data riwayat baru
 func tambahRiwayat() {
 	if jumlahRiwayat >= maxData {
 		fmt.Println("Kapasitas riwayat penuh!")
@@ -528,13 +590,50 @@ func tambahRiwayat() {
 	}
 
 	var riwayat Riwayat
+	riwayat.id = generateRiwayatID() // Menghasilkan ID secara otomatis
+	
 	fmt.Println("\nTambah Riwayat Baru")
-	fmt.Print("ID Riwayat: ")
-	fmt.Scanln(&riwayat.id)
-	fmt.Print("ID Pasien: ")
+	fmt.Println("ID Riwayat:", riwayat.id) // Menampilkan ID yang dihasilkan
+	
+	// Menampilkan daftar pasien yang tersedia dan mendapatkan ID pasien
+	fmt.Println("\nDaftar Pasien Tersedia:")
+	tampilkanPasien()
+	fmt.Print("\nID Pasien: ")
 	fmt.Scanln(&riwayat.pasienID)
-	fmt.Print("ID Dokter: ")
+	
+	// Memvalidasi keberadaan pasien
+	foundPasien := false
+	for i := 0; i < jumlahPasien; i++ {
+		if daftarPasien[i].id == riwayat.pasienID {
+			foundPasien = true
+			break
+		}
+	}
+	if !foundPasien {
+		fmt.Println("Pasien dengan ID", riwayat.pasienID, "tidak ditemukan.")
+		return
+	}
+	
+	// Menampilkan daftar dokter yang tersedia dan mendapatkan ID dokter
+	fmt.Println("\nDaftar Dokter Tersedia:")
+	tampilkanDokter()
+	fmt.Print("\nID Dokter: ")
 	fmt.Scanln(&riwayat.dokterID)
+	
+	// Memvalidasi keberadaan dokter
+	foundDokter := false
+	for i := 0; i < jumlahDokter; i++ {
+		if daftarDokter[i].id == riwayat.dokterID {
+			foundDokter = true
+			break
+		}
+	}
+	if !foundDokter {
+		fmt.Println("Dokter dengan ID", riwayat.dokterID, "tidak ditemukan.")
+		return
+	}
+	
+	// Mendapatkan detail lainnya
 	fmt.Print("Tanggal (YYYY-MM-DD): ")
 	fmt.Scanln(&riwayat.tanggal)
 	fmt.Print("Diagnosa: ")
@@ -545,6 +644,7 @@ func tambahRiwayat() {
 	fmt.Println("Riwayat berhasil ditambahkan!")
 }
 
+// Fungsi untuk mengedit data riwayat
 func editRiwayat() {
 	fmt.Print("Masukkan ID Riwayat yang akan diedit: ")
 	var id string
@@ -557,11 +657,47 @@ func editRiwayat() {
 			fmt.Printf("%-6s %-10s %-10s %-12s %-30s\n", "ID", "Pasien ID", "Dokter ID", "Tanggal", "Diagnosa")
 			fmt.Printf("%-6s %-10s %-10s %-12s %-30s\n", daftarRiwayat[i].id, daftarRiwayat[i].pasienID, daftarRiwayat[i].dokterID, daftarRiwayat[i].tanggal, daftarRiwayat[i].diagnosa)
 
-			fmt.Print("\nMasukkan data baru:\n")
-			fmt.Print("ID Pasien: ")
+			fmt.Print("\nMasukkan data baru (ID Riwayat tidak dapat diubah):\n")
+			
+			// Menampilkan daftar pasien yang tersedia dan mendapatkan ID pasien
+			fmt.Println("\nDaftar Pasien Tersedia:")
+			tampilkanPasien()
+			fmt.Print("\nID Pasien: ")
 			fmt.Scanln(&daftarRiwayat[i].pasienID)
-			fmt.Print("ID Dokter: ")
+			
+			// Memvalidasi keberadaan pasien
+			foundPasien := false
+			for j := 0; j < jumlahPasien; j++ {
+				if daftarPasien[j].id == daftarRiwayat[i].pasienID {
+					foundPasien = true
+					break
+				}
+			}
+			if !foundPasien {
+				fmt.Println("Pasien dengan ID", daftarRiwayat[i].pasienID, "tidak ditemukan.")
+				return
+			}
+			
+			// Menampilkan daftar dokter yang tersedia dan mendapatkan ID dokter
+			fmt.Println("\nDaftar Dokter Tersedia:")
+			tampilkanDokter()
+			fmt.Print("\nID Dokter: ")
 			fmt.Scanln(&daftarRiwayat[i].dokterID)
+			
+			// Memvalidasi keberadaan dokter
+			foundDokter := false
+			for j := 0; j < jumlahDokter; j++ {
+				if daftarDokter[j].id == daftarRiwayat[i].dokterID {
+					foundDokter = true
+					break
+				}
+			}
+			if !foundDokter {
+				fmt.Println("Dokter dengan ID", daftarRiwayat[i].dokterID, "tidak ditemukan.")
+				return
+			}
+			
+			// Mendapatkan detail lainnya
 			fmt.Print("Tanggal (YYYY-MM-DD): ")
 			fmt.Scanln(&daftarRiwayat[i].tanggal)
 			fmt.Print("Diagnosa: ")
@@ -577,6 +713,7 @@ func editRiwayat() {
 	}
 }
 
+// Fungsi untuk menghapus data riwayat
 func hapusRiwayat() {
 	fmt.Print("Masukkan ID Riwayat yang akan dihapus: ")
 	var id string
